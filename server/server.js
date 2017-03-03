@@ -40,12 +40,31 @@ io.on('connection', (socket) => {
     //     createdAt: 123
     // });
     
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: 'Welcome to the chat app',
+        createdAt: new Date().getTime()
+    });
+    
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New User joined',
+        createdAt: new Date().getTime()
+    })
+    
     //listen for createMessage from client
                                 //message is the content in createEmail
     socket.on('createMessage', (message) => {
         console.log('msg received: ', message);
-        ///io.emit emits to every connected client
+        // ///io.emit emits to every connected client
         io.emit('newMessage', {
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        });
+        
+        //socket.broadcast emits to everyone except sender 
+        socket.broadcast.emit('newMessage', {
             from: message.from,
             text: message.text,
             createdAt: new Date().getTime()

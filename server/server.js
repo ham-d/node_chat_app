@@ -31,18 +31,25 @@ var io = socketIO(server);
 io.on('connection', (socket) => {
     console.log('new user connected');
     
-    //emit used to create events
+    
+    //emit used to create events to a single connection
     //second argument is used to add content to event (usually used with objects.)
-    socket.emit('newMessage', {
-        from: 'bill',
-        text: 'Hello world',
-        createdAt: 123
-    });
+    // socket.emit('newMessage', {
+    //     from: 'bill',
+    //     text: 'Hello world',
+    //     createdAt: 123
+    // });
     
     //listen for createMessage from client
                                 //message is the content in createEmail
     socket.on('createMessage', (message) => {
         console.log('msg received: ', message);
+        ///io.emit emits to every connected client
+        io.emit('newMessage', {
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        });
     });
     
     //when client disconnects do something

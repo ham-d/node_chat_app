@@ -45,16 +45,20 @@ io.on('connection', (socket) => {
     
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
     
+    //socket.broadcast emits to everyone except sender
     socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
     
     //listen for createMessage from client
                                 //message is the content in createEmail
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
+        //log the message on server
         console.log('msg received: ', message);
         
         //io.emit emits to every connected client
         io.emit('newMessage', generateMessage(message.from, message.text));
-        
+        //runs callback function from client
+                  //message to send to client 
+        callback('This is from the server');
         //socket.broadcast emits to everyone except sender 
         // socket.broadcast.emit('newMessage', {
         //     from: message.from,

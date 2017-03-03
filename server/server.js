@@ -23,17 +23,33 @@ var server = http.createServer((app));
 //creates socket on server
 var io = socketIO(server);
 
+
 //does something when connection is established.
-                     //socket is coming from index.html(client);
+//only use io.on for connecting, then add functions IN it not ON it
+//.on is basically a listener for client events
+                     //socket is coming from index.js(client);
 io.on('connection', (socket) => {
     console.log('new user connected');
+    
+    //emit used to create events
+    //second argument is used to add content to event (usually used with objects.)
+    socket.emit('newMessage', {
+        from: 'bill',
+        text: 'Hello world',
+        createdAt: 123
+    });
+    
+    //listen for createMessage from client
+                                //message is the content in createEmail
+    socket.on('createMessage', (message) => {
+        console.log('msg received: ', message);
+    });
     
     //when client disconnects do something
     socket.on('disconnect', () => {
         console.log('User was disconnected');
     });
 });
-
 
 
 //express server

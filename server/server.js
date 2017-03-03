@@ -7,6 +7,9 @@ const socketIO = require("socket.io");
 const path = require("path");
 const http = require("http");
 
+//local files
+const {generateMessage} = require("./utils/message.js");
+
 const port = process.env.PORT || 3000;
 
 //create easy path to public
@@ -40,35 +43,24 @@ io.on('connection', (socket) => {
     //     createdAt: 123
     // });
     
-    socket.emit('newMessage', {
-        from: 'Admin',
-        text: 'Welcome to the chat app',
-        createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
     
-    socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'New User joined',
-        createdAt: new Date().getTime()
-    })
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
     
     //listen for createMessage from client
                                 //message is the content in createEmail
     socket.on('createMessage', (message) => {
         console.log('msg received: ', message);
-        // ///io.emit emits to every connected client
-        io.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        });
+        
+        //io.emit emits to every connected client
+        io.emit('newMessage', generateMessage(message.from, message.text));
         
         //socket.broadcast emits to everyone except sender 
-        socket.broadcast.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        });
+        // socket.broadcast.emit('newMessage', {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // });
     });
     
     //when client disconnects do something

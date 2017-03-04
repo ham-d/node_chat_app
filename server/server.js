@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
         io.emit('newMessage', generateMessage(message.from, message.text));
         //runs callback function from client
                   //message to send to client 
-        callback('This is from the server');
+        callback();
         
         //socket.broadcast emits to everyone except sender 
         // socket.broadcast.emit('newMessage', {

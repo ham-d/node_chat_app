@@ -18,9 +18,9 @@ socket.on('connect', function(){
 //when newMessage function from server is successful do something on client side(check dev tools)
                                //message is the second argument from server side newMessage function
 socket.on('newMessage', function(message) {
-    console.log('New Message', message);
+    var formattedTime = moment(message.createdAt).format('h:mm a');
     var li = $('<li></li>');
-    li.text(`${message.from}: ${message.text}`);
+    li.text(`${message.from} ${formattedTime}: ${message.text}`);
     
     $('#messages').append(li);
 });
@@ -37,10 +37,11 @@ socket.on('newMessage', function(message) {
 
 //listen for geolocation events
 socket.on('newLocationMessage', function (message) {
+    var formattedTime = moment(message.createdAt).format('h:mm a');
     var li = $('<li></li>');
     var a = $('<a target="_blank">My current location</a>');
     
-    li.text(`${message.from}: `);
+    li.text(`${message.from}: ${formattedTime} `);
     a.attr('href', message.url);
     li.append(a);
     

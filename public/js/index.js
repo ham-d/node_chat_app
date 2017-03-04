@@ -35,6 +35,18 @@ socket.on('newMessage', function(message) {
 //     console.log(data);
 // });
 
+//listen for geolocation events
+socket.on('newLocationMessage', function (message) {
+    var li = $('<li></li>');
+    var a = $('<a target="_blank">My current location</a>');
+    
+    li.text(`${message.from}: `);
+    a.attr('href', message.url);
+    li.append(a);
+    
+    $('#messages').append(li);
+});
+
 //if connection is disconnected do something
 socket.on('discconect', function(){
     console.log('discconected from server');
@@ -49,4 +61,22 @@ $('#message-form').on('submit', function(e) {
         from: 'User',
         text: $('[name=message]').val()
     }, function() {});
-})
+});
+
+//geolocation
+var locationButton = $('#send-location');
+
+locationButton.on('click', function() {
+    if (!navigator.geolocation) {
+        return alert('Geolocation not supported');
+    }
+    
+    navigator.geolocation.getCurrentPosition(function(position){
+        socket.emit('createLocationMessage', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        });
+    }, function(){
+        alert('unable to fetch location');
+    })
+});

@@ -8,7 +8,7 @@ const path = require("path");
 const http = require("http");
 
 //local files
-const {generateMessage} = require("./utils/message.js");
+const {generateMessage, generateLocationMessage} = require("./utils/message.js");
 
 const port = process.env.PORT || 3000;
 
@@ -29,7 +29,7 @@ var io = socketIO(server);
 
 //does something when connection is established.
 //only use io.on for connecting, then add functions IN it not ON it
-//.on is basically a listener for client events
+//.on is basically a listener for events (if in server then from client)
                      //socket is coming from index.js(client);
 io.on('connection', (socket) => {
     console.log('new user connected');
@@ -59,6 +59,7 @@ io.on('connection', (socket) => {
         //runs callback function from client
                   //message to send to client 
         callback('This is from the server');
+        
         //socket.broadcast emits to everyone except sender 
         // socket.broadcast.emit('newMessage', {
         //     from: message.from,
@@ -66,6 +67,11 @@ io.on('connection', (socket) => {
         //     createdAt: new Date().getTime()
         // });
     });
+    
+    //geolocation
+    socket.on('createLocationMessage', (coords) => {
+        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    })
     
     //when client disconnects do something
     socket.on('disconnect', () => {

@@ -27,6 +27,7 @@ socket.on('newMessage', function(message) {
     });
     
     $('#messages').append(html);
+    scrollToBottom();
     
     // var li = $('<li></li>');
     // li.text(`${message.from} ${formattedTime}: ${message.text}`);
@@ -55,6 +56,7 @@ socket.on('newLocationMessage', function (message) {
     });
     
     $('#messages').append(html);
+    scrollToBottom();
     
     // var li = $('<li></li>');
     // var a = $('<a target="_blank">My current location</a>');
@@ -111,3 +113,21 @@ locationButton.on('click', function() {
         alert('unable to fetch location');
     });
 });
+
+//auto-scrolling
+function scrollToBottom(){
+    //selectors
+    var messages = $('#messages');
+    var newMessage = messages.children('li:last-child');
+    
+    //heights
+    var clientHeight = messages.prop('clientHeight');
+    var scrollTop = messages.prop('scrollTop');
+    var scrollHeight = messages.prop('scrollHeight');
+    var newMessageHeight = newMessage.innerHeight();
+    var lastMessageHeight = newMessage.prev().innerHeight();
+    
+    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+        messages.scrollTop(scrollHeight);
+    }
+};

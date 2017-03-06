@@ -6,6 +6,7 @@ var socket = io();
 
 //if connection is established do something
 socket.on('connect', function(){
+    var params = $.deparam(window.location.search);
     console.log('Connected to server');
     
     //emit creates event to send to server.
@@ -13,6 +14,15 @@ socket.on('connect', function(){
     //     from: 'bob',
     //     text: 'hey there'
     // });
+    
+    socket.emit('join', params, function(err) {
+        if (err) {
+            alert(err);
+            window.location.href = "/";
+        } else {
+            console.log('no error');
+        }
+    })
 });
 
 //when newMessage function from server is successful do something on client side(check dev tools)
@@ -67,6 +77,21 @@ socket.on('newLocationMessage', function (message) {
     
     // $('#messages').append(li);
 });
+
+//listen for new people joining
+socket.on('updateUserList', function(users) {
+    //make ordered list for users in room
+    var ol = $('<ol></ol>');
+    
+    //make list item for each user 
+    users.forEach(function(user){
+        ol.append($('<li></li>').text(user));
+    });
+    
+    //show ordered list
+    $('#users').html(ol);
+});
+
 
 //if connection is disconnected do something
 socket.on('discconect', function(){

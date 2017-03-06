@@ -88,8 +88,15 @@ io.on('connection', (socket) => {
         //log the message on server
         console.log('msg received: ', message);
         
-        //io.emit emits to every connected client
-        io.emit('newMessage', generateMessage(message.from, message.text));
+        var user = users.getUser(socket.id);
+        
+        //if user exists and is sending a real string:
+        if (user && isRealString(message.text)) {
+            //io.emit emits to every connected client
+            //send message to everyone in room
+            io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+        }
+        
         //runs callback function from client
                   //message to send to client 
         callback();
@@ -104,7 +111,14 @@ io.on('connection', (socket) => {
     
     //geolocation
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+        var user = users.getUser(socket.id);
+        
+        //if user exists and is sending a real string:
+        if (user) {
+            //io.emit emits to every connected client
+            //send message to everyone in room
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+        }
     });
     
     //when client disconnects do something

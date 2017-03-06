@@ -52,10 +52,14 @@ io.on('connection', (socket) => {
         // socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
     
     socket.on('join', (params, callback) => {
+        //prevent empty username and empty room name
         if (!isRealString(params.name) || !isRealString(params.room)) {
             return callback('Name and room name are required.');
         }
-        
+        //prevent name duplication
+        if (users.getUserList(params.room).indexOf(params.name) !== -1) {
+            return callback('Name is being used');
+        }
         //join connects sockets with same name(adds people to chat room w/ same name)
         socket.join(params.room);
         

@@ -7,6 +7,7 @@ var socket = io();
 //if connection is established do something
 socket.on('connect', function(){
     var params = $.deparam(window.location.search);
+    params.room = params.room.toLowerCase();
     console.log('Connected to server');
     
     //emit creates event to send to server.
